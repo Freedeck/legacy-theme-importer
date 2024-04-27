@@ -9,18 +9,21 @@ Object.keys(themes).forEach(themeId => {
 		"description": "Theme imported with Legacy Theme Importer.",
 		"theme": "black.css"
 	}
+	let oldThemeId = themeId;
 	manifest.name = themeId;
 	manifest.theme = themeId + ".css";
-	if(!fs.existsSync(`./themes/${themeId.toLowerCase().replace(' ','_')}`)) {
-		fs.mkdirSync(`./themes/${themeId.toLowerCase().replace(' ','_')}`);
+	themeId = themeId.toLowerCase().replace(' ','_');
+	if(!fs.existsSync(`./themes/${themeId}`)) {
+		fs.mkdirSync(`./themes/${themeId}`);
 	}
-	fs.writeFileSync(`./themes/${themeId.toLowerCase().replace(' ','_')}/manifest.json`, JSON.stringify(manifest, null, 2));
-	fs.writeFileSync(`./themes/${themeId.toLowerCase().replace(' ','_')}/${themeId}.css`, `:root {`);
-	themes[themeId].forEach(prop => {
+	fs.writeFileSync(`./themes/${themeId}/manifest.json`, JSON.stringify(manifest, null, 2));
+	fs.writeFileSync(`./themes/${themeId}/${themeId}.css`, `:root {`);
+	themes[oldThemeId].forEach(prop => {
 		let propId = Object.keys(prop)[0];
 		let value = prop[propId];
-		fs.appendFileSync(`./themes/${themeId.toLowerCase().replace(' ','_')}/${themeId}.css`, `--fd-${propId}:${value};`);
+		if(propId == 'background') value = `linear-gradient(${value})`
+		fs.appendFileSync(`./themes/${themeId}/${themeId}.css`, `\n\t--fd-${propId}:${value};`);
 	})
-	fs.appendFileSync(`./themes/${themeId.toLowerCase().replace(' ','_')}/${themeId}.css`, `\n}`);
-	console.log(`Created theme ${themeId.toLowerCase().replace(' ','_')}.`)
+	fs.appendFileSync(`./themes/${themeId}/${themeId}.css`, `\n}`);
+	console.log(`Created theme ${themeId}.`)
 })
